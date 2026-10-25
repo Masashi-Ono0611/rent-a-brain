@@ -6,8 +6,9 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-// protects=only a downloaded, checksum-matching, version-matching scanner reaches GITHUB_PATH;
+// Value: protects=only a downloaded, checksum-matching, version-matching scanner reaches GITHUB_PATH;
 // fails_when=bad pins/download/digest/version are accepted or valid installation cannot finish;
+// why_new=no existing test exercises scanner installation failure paths; seam=none;
 // no_claim=synthetic local archive and mocked download/platform do not prove the official Linux artifact or GitHub execution.
 test('CI scanner installer fails closed at real shell boundaries and publishes only a verified version', () => {
   const root = realpathSync(mkdtempSync(join(tmpdir(), 'rab-scanner-installer-')));

@@ -10,7 +10,8 @@ import { createSkipPolicy, privateFixtureSkips } from '../../scripts/test/run.ts
 const file = fileURLToPath(new URL('../replay/host-knowledge.test.ts', import.meta.url));
 const reason = 'needs the private approved lesson fixtures (not in the public export)';
 
-// protects=reviewed public omissions remain explicit; fails_when=unknown skips pass;
+// Value: protects=reviewed public omissions remain explicit; fails_when=unknown skips pass;
+// why_new=the previous runner accepted arbitrary skipped tests; seam=none;
 // no_claim=does not prove the private fixtures or GitHub Actions execution.
 test('public export permits only the two exact private-fixture omissions', () => {
   const policy = createSkipPolicy(true);
@@ -19,7 +20,8 @@ test('public export permits only the two exact private-fixture omissions', () =>
   assert.throws(() => policy({ name: privateFixtureSkips[0]!, file, skip: reason }), /UNEXPECTED_TEST_SKIP/);
 });
 
-// protects=file/reason/export binding; fails_when=an unrelated skip impersonates an omission;
+// Value: protects=file/reason/export binding; fails_when=an unrelated skip impersonates an omission;
+// why_new=the allowed omission must not apply to unrelated files or full trees; seam=none;
 // no_claim=does not prove suite coverage or service behavior.
 test('full trees, forged paths and changed skip reasons fail closed; unskipped tests pass', () => {
   const name = privateFixtureSkips[0]!;
@@ -28,12 +30,14 @@ test('full trees, forged paths and changed skip reasons fail closed; unskipped t
   assert.throws(() => createSkipPolicy(true)({ name, file, skip: 'temporary' }), /UNEXPECTED_TEST_SKIP/);
   assert.throws(() => createSkipPolicy(true)({ name, file, skip: true }), /UNEXPECTED_TEST_SKIP/);
   assert.throws(() => createSkipPolicy(true)({ name, skip: reason }), /UNEXPECTED_TEST_SKIP/);
+  assert.throws(() => createSkipPolicy(true)({ name, todo: true }), /UNEXPECTED_TEST_TODO/);
   assert.doesNotThrow(() => createSkipPolicy(false)({ name: 'normal test', skip: false }));
   assert.doesNotThrow(() => createSkipPolicy(false)({ name: 'normal test' }));
 });
 
-// protects=real CLI execution and failure propagation, including symlink entry aliases;
+// Value: protects=real CLI execution and failure propagation, including symlink entry aliases;
 // fails_when=tests are bypassed or assertion/import/skip failures return zero;
+// why_new=unit policy calls cannot detect a skipped CLI entrypoint or process status; seam=none;
 // no_claim=does not verify the CI installer, private knowledge, or GitHub runner.
 test('test CLI executes canonical and aliased entrypoints and rejects failed or skipped fixtures', () => {
   const root = realpathSync(mkdtempSync(join(tmpdir(), 'rab-runner-contract-')));
@@ -52,10 +56,11 @@ test('test CLI executes canonical and aliased entrypoints and rejects failed or 
       { body: "import {test} from 'node:test'; test('synthetic failure',()=>{throw new Error('synthetic assertion failed')});", status: 1, text: 'synthetic assertion failed' },
       { body: "import {test} from 'node:test'; test.skip('synthetic unknown skip',()=>{});", status: 1, text: 'UNEXPECTED_TEST_SKIP' },
       { body: "import './does-not-exist.ts';", status: 1, text: 'does-not-exist' },
+      { body: "import {test} from 'node:test'; test.todo('synthetic pending test');", status: 1, text: 'UNEXPECTED_TEST_TODO' },
     ];
-    for (const entry of [root, alias]) for (const scenario of cases) {
+    for (const entry of [root, alias]) for (const flags of [[], ['--preserve-symlinks-main']]) for (const scenario of cases) {
       writeFileSync(fixture, scenario.body);
-      const result = spawnSync(process.execPath, [join(entry, 'scripts/test/run.ts')], { cwd: root, env, encoding: 'utf8', timeout: 10_000 });
+      const result = spawnSync(process.execPath, [...flags, join(entry, 'scripts/test/run.ts')], { cwd: root, env, encoding: 'utf8', timeout: 10_000 });
       assert.ifError(result.error);
       assert.equal(result.status, scenario.status, result.stdout + result.stderr);
       assert.ok((result.stdout + result.stderr).includes(scenario.text), result.stdout + result.stderr);
