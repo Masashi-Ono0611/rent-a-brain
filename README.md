@@ -63,6 +63,8 @@ The [Rent a Brain roadmap](https://github.com/Masashi-Ono0611/rent-a-brain/issue
 
 The [pilot contract and launch checklist](docs/product/pilot-contract.md) define the current scope, purchase states, withdrawal policy and required evidence before live purchasing can be enabled.
 
+The [selected-source draft guide](docs/product/selected-source-drafts.md) covers the local operator port and synthetic controls for partial Issue #6 implementation. Native gbrain transport and an owner-operated real export remain pending; its output is an unapproved local draft.
+
 Anyone can fork this MIT-licensed repository, commit to their fork, and submit a reviewed pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for exact setup, public-export test omissions, synthetic fixtures, and contribution boundaries.
 
 ## Run it

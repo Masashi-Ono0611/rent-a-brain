@@ -8,3 +8,5 @@ export type { ScannerPins, ScannerEngine, ScanResult, BundleScanner } from './sc
 export { createPublisher } from './seal.ts';
 export type { PublisherConfig } from './seal.ts';
 export { proposeListing } from './list.ts';
+export { createSelectedSliceDraft } from './selected-source.ts';
+export type { SelectedSourceScope, SelectedPage, SourceReviewMetadata, SelectedSourcePage, SelectedSourceRead, SelectedSourceReader, SelectedSourceRequest, SelectedPublicDraft, SelectedSliceDraft } from './selected-source.ts';
