@@ -57,6 +57,12 @@ the founder, with five approved lessons about operating AI coding agents.
 
 Design: `docs/design/10-master-design.md` (normative). Founder decisions: `docs/decisions.md`.
 
+## Current pilot and contributions
+
+The [Rent a Brain roadmap](https://github.com/Masashi-Ono0611/rent-a-brain/issues/1) targets one externally purchased answer from the founder's explicitly selected knowledge, using Solana USDC through x402. The inherited implementation is not yet a deployed x402 service. Historical evidence above remains scoped to the original build.
+
+Anyone can fork this MIT-licensed repository, commit to their fork, and submit a reviewed pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for exact setup, public-export test omissions, synthetic fixtures, and contribution boundaries.
+
 ## Run it
 
 Requires Node 24.13.0 and npm 11.6.2. Dependencies are exact-pinned and installed without scripts.

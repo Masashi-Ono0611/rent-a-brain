@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a user outcome with a bounded scope and testable completion.
+title: "feature: "
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User and desired outcome
+      description: Who needs this, what happens today, and what should happen instead?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Current implementation and evidence
+      description: Link relevant public code or issues. Separate verified behavior from a proposal.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and verification
+      description: List observable pass/fail conditions, failure cases, and what the proposed tests cannot prove.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Dependencies, non-goals, and rollback
+      description: Note payment, provenance, source access, content terms, infrastructure, and owner decisions. Do not paste private material.
+    validations:
+      required: true
