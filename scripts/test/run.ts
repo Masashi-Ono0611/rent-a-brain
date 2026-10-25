@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, realpathSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { run } from 'node:test';
@@ -26,7 +26,7 @@ function discover(path: string): string[] {
 }
 // Bare `node --test` discovers this directory too. Never recursively launch
 // from a test child; npm test is the authoritative explicit-file invocation.
-if (process.env.NODE_TEST_CONTEXT === undefined && process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (process.env.NODE_TEST_CONTEXT === undefined && process.argv[1] !== undefined && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const files = discover(join(root, 'test')).sort();
   if (files.length === 0) throw new Error('NO_TESTS_FOUND');
   const checkSkip = createSkipPolicy(existsSync(join(root, 'PUBLIC_EXPORT')));
