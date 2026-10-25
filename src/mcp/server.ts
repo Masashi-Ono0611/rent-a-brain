@@ -7,7 +7,7 @@ import type { Arm, RuntimePort } from './protocol.ts';
 /** Only the narrow IPC client is injected into the buyer; never a broker instance. */
 export async function serveRestrictedMcp(port: RuntimePort, transport: Transport, arm: Arm): Promise<Server> {
   const tools = inventory(arm), names = namesForArm(arm); let calls = 0;
-  const server = new Server({ name: 'ask-a-brain', version: '1.0.0' }, { capabilities: { tools: {} } });
+  const server = new Server({ name: 'rent-a-brain', version: '1.0.0' }, { capabilities: { tools: {} } });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools }));
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {

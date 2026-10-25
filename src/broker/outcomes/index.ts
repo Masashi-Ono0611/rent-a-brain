@@ -163,7 +163,7 @@ function signal(rows: readonly Outcome[], source: OutcomeSource): Signal {
 }
 function displayId(id: string): string { return id.replace(/[|<>`\r\n]/g, '_'); }
 function renderReport(store: Store, receipts: readonly Receipt[], day: string): ReportOutput {
-  const lines = [`Ask a Brain — consults started ${day} UTC`, '', 'unrated until 3 independent buyers',
+  const lines = [`Rent a Brain — consults started ${day} UTC`, '', 'unrated until 3 independent buyers',
     'Eligible independent buyers: 0 (closed admission policy). No numeric score. Missing feedback is unknown.',
     'Metadata-only is reduced conformance; import_pending means gbrain storage remains unmet.', '',
     '| Evidence class / network | Finalized paid denominator | Delivered | Failed ever | Pending delivery | Refunded | Partial refund | Principal atomic | Returned atomic | Actual fees lamports | Unknown payments | Unknown fees |',

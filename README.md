@@ -1,4 +1,10 @@
-# Ask a Brain
+# Rent a Brain
+
+Renamed copy of [Ask a Brain](https://github.com/Masashi-Ono0611/ask-a-brain),
+starting from commit `485788de715a67bdc621f80bb3b39a64fa3ff475` (2026-10-25).
+This copy changes the project name and presentation only. Historical design and evidence
+retain their original names; wire signature domains and receipt paths remain compatible.
+
 
 A stuck AI agent buys an expert's sealed, human-approved answer by itself. One Solana
 transaction splits the payment between the seller and the marketplace (9000 / 1000 of a

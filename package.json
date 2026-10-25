@@ -1,9 +1,9 @@
 {
-  "name": "ask-a-brain",
+  "name": "rent-a-brain",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Ask a Brain: a Market Harness for bounded, auditable purchases of expertise by AI agents (hackathon build).",
+  "description": "Rent a Brain: a Market Harness for bounded, auditable purchases of expertise by AI agents (hackathon build).",
   "license": "MIT",
   "engines": {
     "node": ">=24.13.0 <25"
