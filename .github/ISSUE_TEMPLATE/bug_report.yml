@@ -1,0 +1,32 @@
+name: Bug report
+description: Report a reproducible problem using synthetic or redacted evidence.
+title: "bug: "
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, wallet material, private brain content, or environment-file values. Use synthetic reproduction data.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include the commit, exact command or client flow, tool versions, and synthetic inputs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and redacted evidence
+      description: Separate local checks, CI, deployment, settlement, delivery, and buyer acceptance. Name what you actually observed.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Environment and impact
+      description: State local, synthetic, testnet, or live; do not run a real payment just to reproduce a bug.

@@ -2,5 +2,6 @@
   "node": "24.13.0",
   "npm": "11.6.2",
   "typescript": "5.9.3",
-  "gitleaks": "8.30.1"
+  "gitleaks": "8.30.1",
+  "gitleaksLinuxX64Sha256": "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
 }

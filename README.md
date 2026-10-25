@@ -29,7 +29,7 @@ the founder, with five approved lessons about operating AI coding agents.
 | Five lessons and their questions were approved by the founder, then sealed with SHA-256 hashes | `docs/evidence/content/approval-index.md` | Human approval record |
 | A matched A/B/C study with Codex as the buyer (A no consultation, B free checklist, C paid consultation, **simulated payment**): no difference detected | `docs/impl/decision-log.md`, entries L8 and L9 | Exploratory, n = 6 incidents × 1 run; passes A 2 / B 2 / C 2 of 18 slots, nothing improved or regressed |
 | Returning the procedural denial code to the agent (a labelled follow-up variant, not merged with the study above) raised passes from 6 to 11 of 18 | same entries | Exploratory, post-hoc variant; the same 6 incidents |
-| The test suite and a secret scan pass | `npm run check` | Full tree: 1002 pass, 0 skipped. This public snapshot: 1000 pass, 2 skipped on purpose (see below) |
+| Historical original-build tests and secret scan | `npm run check` | Original full tree: 1002 pass, 0 skipped; original public snapshot: 1000 pass, 2 intentional skips. These historical counts are not current branch/CI results; run the checks below for the current revision |
 
 ## What is not claimed
 
@@ -56,6 +56,14 @@ the founder, with five approved lessons about operating AI coding agents.
 | A/B/C runner and grader | `src/eval` |
 
 Design: `docs/design/10-master-design.md` (normative). Founder decisions: `docs/decisions.md`.
+
+## Current pilot and contributions
+
+The [Rent a Brain roadmap](https://github.com/Masashi-Ono0611/rent-a-brain/issues/1) targets one externally purchased answer from the founder's explicitly selected knowledge, using Solana USDC through x402. The inherited implementation is not yet a deployed x402 service. Historical evidence above remains scoped to the original build.
+
+The [pilot contract and launch checklist](docs/product/pilot-contract.md) define the current scope, purchase states, withdrawal policy and required evidence before live purchasing can be enabled.
+
+Anyone can fork this MIT-licensed repository, commit to their fork, and submit a reviewed pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for exact setup, public-export test omissions, synthetic fixtures, and contribution boundaries.
 
 ## Run it
 
