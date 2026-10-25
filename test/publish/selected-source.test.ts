@@ -89,8 +89,8 @@ test('second exact pass rejects revision, content and metadata races; caller mut
   assert.deepEqual(adapter.calls, Array.from({ length: 2 }, () => ({ scope, pageId: selection.pageId, revision: selection.revision })));
 });
 
-// Value: protects=unknown or ineligible review fields and unsafe text cannot produce a projection;
-// fails_when=ownership rights sensitivity or linked content bypasses draft review;
+// Value: protects=unknown review fields and known private references cannot produce a projection;
+// fails_when=rights aliases or private scope and nested lineage references bypass draft review;
 // why_new=source records can be unreviewed unlike legacy approved worksheets; seam=none;
 // no_claim=markers are incomplete and a clean synthetic draft is not consent or a licence grant.
 test('unreviewed metadata and unsafe text remain private, blocked and visible for remediation', async () => {
@@ -99,14 +99,23 @@ test('unreviewed metadata and unsafe text remain private, blocked and visible fo
     ['origin', value => ({ ...value, metadata: { ...value.metadata, origin: 'business' } })],
     ['license', value => ({ ...value, metadata: { ...value.metadata, license: null } })],
     ...['[[excluded-page-canary]]', 'https://example.invalid/private-canary', 'AAB_PRIVATE_CANARY', 'derived_from hidden-page'].map(text => ['text-requires-review', (value: SelectedSourcePage) => ({ ...value, text })] as const),
+    ...[scope.brain, scope.source, selection.pageId, selection.revision, 'private-lineage-canary', 'local-only-canary', 'excluded-page-canary', 'excluded-backlink-canary'].map(reference => ['private-reference', (value: SelectedSourcePage) => ({ ...value, text: `A plain reference to ${reference}.` })] as const),
+    ['private-reference', value => ({ ...value, text: 'A plain reference to deeply-nested-canary.', lineage: { nested: [{ deeper: ['deeply-nested-canary'] }] } })],
+    ...[' Unknown ', ' N/A ', ' NoAssertion '].map(license => ['license', (value: SelectedSourcePage) => ({ ...value, metadata: { ...value.metadata, license } })] as const),
   ];
   for (const [blocker, mutate] of cases) {
     const source = mutate(page()); const result = await createSelectedSliceDraft(reader(mutate), request());
-    assert.equal(result.state, 'blocked'); assert.equal(result.publicProjection, null);
+    assert.equal(result.state, 'blocked', blocker); assert.equal(result.publicProjection, null);
     assert.ok(result.privateCandidate.pages[0]!.blockers.includes(blocker));
     assert.deepEqual(result.privateCandidate.pages[0]!.source, source);
     assert.equal((await createSelectedSliceDraft(reader(), request())).state, 'requires-human-review');
   }
+  const crossPage = await createSelectedSliceDraft(reader(value => ({ ...value, text: value.pageId === selection.pageId ? `A reference to ${second.pageId}.` : value.text })), request([selection, second]));
+  assert.equal(crossPage.publicProjection, null);
+  assert.ok(crossPage.privateCandidate.pages[0]!.blockers.includes('private-reference'));
+  const nonReferences = await createSelectedSliceDraft(reader(value => ({ ...value, text: 'There are 99 synthetic observations.', lineage: { empty: '', excludedPageCount: 99 } })), request());
+  assert.equal(nonReferences.state, 'requires-human-review');
+  assert.equal(nonReferences.publicProjection!.pages[0]!.text, 'There are 99 synthetic observations.');
 });
 
 // Value: protects=excluded corpus replacement has no effect on selected public output;
@@ -147,6 +156,7 @@ test('invalid selection is rejected before reads; oversized or malformed source 
     (value: SelectedSourcePage) => ({ ...value, text: '\ud800' }),
     (value: SelectedSourcePage) => ({ ...value, lineage: { canary: 'x'.repeat(1048577) } }),
     (value: SelectedSourcePage) => ({ ...value, metadata: { ...value.metadata, unexpected: 'private-extra' } }),
+    (value: SelectedSourcePage) => { const metadata: Record<string, unknown> = { ...value.metadata }; delete metadata.rights; return { ...value, metadata } as unknown as SelectedSourcePage; },
   ]) await assert.rejects(createSelectedSliceDraft(reader(mutate), request()));
   assert.equal((await createSelectedSliceDraft(reader(), request())).state, 'requires-human-review');
 });

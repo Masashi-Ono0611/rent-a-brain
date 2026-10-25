@@ -103,6 +103,14 @@ export async function createSelectedSliceDraft(reader: SelectedSourceReader, req
     const stable = (page: SelectedSourcePage) => canonicalBytes({ scope: page.scope, pageId: page.pageId, revision: page.revision, text: page.text, metadata: page.metadata, lineage: page.lineage });
     requirePublish(bytesHash(stable(first)) === bytesHash(stable(second)), 'SELECTED_SOURCE_CHANGED_DURING_READ');
   }
+  const privateReferences = new Set([sourceScope.brain, sourceScope.source, ...selected.flatMap(page => [page.pageId, page.revision])]);
+  // Inspect only JSON already returned for selected pages, never follow source/graph references.
+  const lineageValues: unknown[] = snapshots.map(page => page.lineage);
+  while (lineageValues.length > 0) {
+    const value = lineageValues.pop();
+    if (typeof value === 'string') { if (value.length > 0) privateReferences.add(value); }
+    else if (value !== null && typeof value === 'object') for (const child of Object.values(value)) lineageValues.push(child);
+  }
   const pages = snapshots.map((page, index) => {
     const blockers: string[] = [];
     if (!['personal-public', 'synthetic'].includes(page.metadata.origin)) blockers.push('origin');
@@ -111,8 +119,10 @@ export async function createSelectedSliceDraft(reader: SelectedSourceReader, req
     if (page.metadata.sensitivity !== 'none') blockers.push('sensitivity');
     // Eligibility to prepare a local review draft is NOT publication or sale permission.
     if (page.metadata.rights !== 'permitted-for-local-review') blockers.push('rights');
-    if (page.metadata.license === null || page.metadata.license === 'unknown') blockers.push('license');
+    const license = page.metadata.license?.trim().toLowerCase();
+    if (license === undefined || ['unknown', 'n/a', 'noassertion'].includes(license)) blockers.push('license');
     try { guardText(encodeUtf8(page.text), true); } catch { blockers.push('text-requires-review'); }
+    if ([...privateReferences].some(reference => page.text.includes(reference))) blockers.push('private-reference');
     return { selection: selected[index]!, source: page, blockers };
   });
   const blocked = pages.some(page => page.blockers.length > 0);

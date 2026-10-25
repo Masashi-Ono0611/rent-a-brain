@@ -13,6 +13,10 @@ for a repeated candidate comparison. Never derive a public ID from a source slug
 path, revision or hash. The operator supplies the selection; buyer input must not
 reach this API.
 
+The following is an illustrative API call, not a runnable source export.
+`syntheticReader` must be defined externally as a `SelectedSourceReader` satisfying
+the read contract below; no live reader or transport is supplied here.
+
 ```ts
 import { randomUUID } from 'node:crypto';
 import { SystemClock } from '../../src/common/index.ts';
@@ -48,14 +52,23 @@ Keep the two returned parts separate:
 
 For a projection, metadata must explicitly say `origin: personal-public` or
 `synthetic`, `visibility: public`, `ownership: seller`, `sensitivity: none`, and
-`rights: permitted-for-local-review`. A missing/unknown licence also blocks the
-projection. These are adapter claims about eligibility for a local review draft;
+`rights: permitted-for-local-review`. All metadata keys are required: a missing
+key or invalid field shape rejects the read. A null licence or the sentinel values
+`unknown`, `n/a` and `noassertion` (after trimming and lowercasing) block the
+projection. This sentinel check does not validate a licence. These are adapter
+claims about eligibility for a local review draft;
 they never establish approval, a new content licence or permission to sell. The
 licence value and other unreviewed fields remain private for the reviewer. Unknown
 or ineligible fields produce `state: blocked`, a null projection and named blockers
 beside the original private record. Linked/active text, provenance markers and
-known sensitive markers are also blocked. The conservative text guard does not
-detect arbitrary personal information or establish rights.
+known sensitive markers are also blocked. Body text containing an exact nonempty
+private brain/source, any selected page ID/revision, or any string value nested in
+the selected pages' private lineage blocks the entire projection with
+`private-reference`. This inspects returned JSON only, without reading referenced
+pages. Numeric counts and empty strings are not identifiers. Conservative substring
+matches can block otherwise harmless prose; remediate and review a new candidate
+rather than silently scrubbing or rewriting exact source bytes. Unknown or encoded
+references and arbitrary personal information still require human review.
 
 Only `requires-human-review` means the draft passed these local checks. Human
 rights review, full exact-byte reading and the protected approval/sealing workflow
