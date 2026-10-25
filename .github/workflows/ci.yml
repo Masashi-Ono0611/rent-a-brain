@@ -1,6 +1,3 @@
-# LEAD MUST replace every ACTION@<SHA-TODO> with a verified full commit SHA.
-# Prepared only: CI has not run. Lead must also provision checksum-verified
-# system gitleaks 8.30.1; absent/mismatched scanner fails closed.
 name: ci
 on: [push, pull_request, workflow_dispatch]
 permissions:
@@ -13,13 +10,17 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@<SHA-TODO>
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: actions/setup-node@<SHA-TODO>
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 24.13.0
+          node-version-file: .node-version
+      - name: Install the pinned npm version without lifecycle scripts
+        run: npm install --global --ignore-scripts "npm@$(node -p 'JSON.parse(require("node:fs").readFileSync("config/tooling-pins.json", "utf8")).npm')"
+      - name: Install the checksum-verified pinned scanner
+        run: bash .github/scripts/install-gitleaks.sh
       - run: npm ci --ignore-scripts
       - run: npm run check:toolchain
       - run: npm run typecheck
